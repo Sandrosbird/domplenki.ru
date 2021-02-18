@@ -18,19 +18,19 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
     //MARK: - Properties
     let myRefreshControl = UIRefreshControl()
     let singleton = Singleton.shared
-    var shoppingCart: [ShopItem] = Singleton.shared.getItems(type: .cart)
-    var averagePrice: Int? = 0
+    lazy var shoppingCart: [ShopItem] = []
+    lazy var averagePrice: Int? = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButton()
         configureTableView()
-        // Do any additional setup after loading the view.
+        shoppingCart = singleton.getItems(type: .cart)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        setupNavigationBar()
         refreshTable(nil)
         updateAveragePrice()
     }
@@ -70,11 +70,30 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailViewController") as? ItemDetailViewController else { return }
+        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailTableViewController") as? ItemDetailTableViewController else { return }
         itemDetailViewController.item = shoppingCart[indexPath.row]
         itemDetailViewController.row = indexPath.row
-        showDetailViewController(itemDetailViewController, sender: self)
-//        show(itemDetailViewController, sender: self)
+//        showDetailViewController(itemDetailViewController, sender: self)
+        show(itemDetailViewController, sender: self)
+    }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.frame = CGRect(x: 15, y: 20, width: view.frame.width, height: 17)
+        label.font = UIFont(name: "Arial", size: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        label.text = "В корзине \(shoppingCart.count) товар(ов)"
+        
+        let headerView = UIView()
+
+        headerView.backgroundColor = .systemGray5
+       
+        headerView.addSubview(label)
+        
+        return headerView
     }
     
     //MARK: - Helpers
@@ -119,6 +138,20 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
         }
     }
     
+    func setupNavigationBar() {
+        
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.isTranslucent = true
+        
+        navigationItem.title = "Корзина"
+                
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.backgroundColor = .white
+    }
+    
     //MARK: - Actions
     @IBAction func favoriteButtonDidTap(_ sender: UIButton) {
         let row = sender.tag
@@ -126,19 +159,37 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
         let indexPath = IndexPath(item: row, section: 0)
         let favorites = singleton.getItems(type: .favorite)
         
-        if !favorites.contains(favorite) {
-            favorite.isFavorite = true
-            singleton.catalogueItems[row].isFavorite = true
-            singleton.recordItem(type: .favorite, item: favorite)
-            tableView.reloadRows(at: [indexPath], with: .left)
+        if favorite.isFavorite {
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+//            catalogueItems.remove(at: row)
+//            catalogueItems.insert(favorite, at: row)
+            tableView.reloadRows(at: [indexPath], with: .none)
         } else {
-            favorite.isFavorite = false
-            singleton.catalogueItems[row].isFavorite = false
-            singleton.removeItem(type: .favorite, position: row)
-            tableView.reloadRows(at: [indexPath], with: .left)
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+            tableView.reloadRows(at: [indexPath], with: .none)
         }
     }
 
+    @IBAction func eraseCartButtonDidTap(_ sender: Any) {
+        let alert = UIAlertController(title: "Внимание!", message: "Вы точно хотите очистить корзину?", preferredStyle: .actionSheet)
+        let cancelAction = UIAlertAction(title: "Отмена", style: .destructive, handler: nil)
+        let acceptAction = UIAlertAction(title: "Подтвердить", style: .default) { [weak self] (_) in
+            guard let strongSelf = self else { return }
+            for item in strongSelf.shoppingCart {
+                strongSelf.singleton.changeItemFlag(type: .cart, for: item)
+            }
+            strongSelf.shoppingCart.removeAll()
+            strongSelf.singleton.removeAllFromCart()
+            strongSelf.averagePrice = 0
+            strongSelf.updateAveragePrice()
+            strongSelf.tableView.reloadData()
+        }
+        alert.addAction(cancelAction)
+        alert.addAction(acceptAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Navigation
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

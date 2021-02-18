@@ -20,6 +20,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+    }
+    
     //MARK: - TableVIew Delegate&DataSource
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -27,6 +32,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 3
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
     }
         
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -38,7 +47,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         if indexPath.section == 0 {
             switch indexPath.row {
             case 0:
-                infoCell.cellLabel.text = Singleton.shared.user?.fullName
+                infoCell.cellLabel.text = "Личные данные"
             case 1:
                 infoCell.cellLabel.text = "Адреса доставки"
             default:
@@ -59,6 +68,27 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return UITableViewCell()
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.frame = CGRect(x: 15, y: 20, width: view.frame.width, height: 17)
+        label.font = UIFont(name: "Arial", size: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
+        switch section {
+        case 0:
+            label.text = "Мои данные"
+        default:
+            label.text = "Помощь"
+        }
+        
+        let headerView = UIView()
+
+        headerView.backgroundColor = .systemGray5
+       
+        headerView.addSubview(label)
+        
+        return headerView
+    }
+    
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
         case 0:
@@ -66,5 +96,20 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         default:
             return "Помощь"
         }
+    }
+    
+    //MARK: - Helpers
+    func setupNavigationBar() {
+        
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.isTranslucent = true
+        
+        navigationItem.title = "Профиль"
+                
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.backgroundColor = .white
     }
 }

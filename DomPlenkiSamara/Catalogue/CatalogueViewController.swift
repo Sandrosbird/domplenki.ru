@@ -24,13 +24,16 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
         tableView.delegate = self
         tableView.dataSource = self
         configureRefreshControl()
-        if singleton.catalogueItems.isEmpty {
-            catalogueItems = ItemsFactory.createItems()
-            singleton.catalogueItems = catalogueItems
+        if singleton.checkCatalogueForEmptiness() {
+            singleton.fillCatalogue()
         } else {
-            catalogueItems = singleton.catalogueItems
+            catalogueItems = singleton.getItems(type: .catalogue)
         }
-        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
     
     //MARK: - Delegate&DataSource
@@ -45,7 +48,7 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
             let actionPrice = catalogueItems[indexPath.row].actionPrice
         else { return UITableViewCell() }
         cell.cellName.text = catalogueItems[indexPath.row].name
-        cell.cellPrice.text = "Цена: \(price) ₽/ед."
+        cell.cellPrice.text = "\(price) ₽/ед."
         cell.cellImage.image = catalogueItems[indexPath.row].image
 
         cell.favoriteButton.tag = indexPath.row
@@ -73,14 +76,22 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
         myRefreshControl.endRefreshing()
     }
     
+    func setupNavigationBar() {
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationItem.largeTitleDisplayMode = .automatic   
+    }
+    
     // MARK: - Navigation
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailViewController") as? ItemDetailViewController else { return }
+        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailTableViewController") as? ItemDetailTableViewController else { return }
         itemDetailViewController.item = catalogueItems[indexPath.row]
         itemDetailViewController.row = indexPath.row
-        showDetailViewController(itemDetailViewController, sender: self)
-//        show(itemDetailViewController, sender: self)
+//        showDetailViewController(itemDetailViewController, sender: self)
+        show(itemDetailViewController, sender: self)
     }
     
     //MARK: - Actions
@@ -90,21 +101,14 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
         let indexPath = IndexPath(item: row, section: 0)
         let favorites = singleton.getItems(type: .favorite)
         
-        if !favorites.contains(favorite) {
-            favorite.isFavorite = true
-            singleton.catalogueItems[row].isFavorite = true
-            catalogueItems.remove(at: row)
-            catalogueItems.insert(favorite, at: row)
-            singleton.recordItem(type: .favorite, item: favorite)
-            
-            tableView.reloadRows(at: [indexPath], with: .left)
-            
+        if favorite.isFavorite {
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+//            catalogueItems.remove(at: row)
+//            catalogueItems.insert(favorite, at: row)
+            tableView.reloadRows(at: [indexPath], with: .none)
         } else {
-            favorite.isFavorite = false
-            singleton.catalogueItems[row].isFavorite = false
-            singleton.removeItem(type: .favorite, position: row)
-            tableView.reloadRows(at: [indexPath], with: .left)
-            
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+            tableView.reloadRows(at: [indexPath], with: .none)
         }
     }
 }

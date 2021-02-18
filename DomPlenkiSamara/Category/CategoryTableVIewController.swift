@@ -13,8 +13,12 @@ class CategoryTableVIewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupNavigationBar()
     }
 
     // MARK: - Table view data source
@@ -38,6 +42,15 @@ class CategoryTableVIewController: UITableViewController {
         return cell
     }
     
+    func setupNavigationBar() {
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationItem.largeTitleDisplayMode = .always
+        
+    }
 
     /*
     // Override to support conditional editing of the table view.

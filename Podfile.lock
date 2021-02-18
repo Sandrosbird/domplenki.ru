@@ -1,16 +1,26 @@
 PODS:
-  - LayoutHelper (1.0.0)
+  - GMStepper (2.2)
+  - Realm (10.6.0):
+    - Realm/Headers (= 10.6.0)
+  - Realm/Headers (10.6.0)
+  - RealmSwift (10.6.0):
+    - Realm (= 10.6.0)
 
 DEPENDENCIES:
-  - LayoutHelper
+  - GMStepper
+  - RealmSwift (~> 10.6.0)
 
 SPEC REPOS:
   trunk:
-    - LayoutHelper
+    - GMStepper
+    - Realm
+    - RealmSwift
 
 SPEC CHECKSUMS:
-  LayoutHelper: fd809f52e0ae583f7576bf5d2af8248b5c3ec4d0
+  GMStepper: 89fb106944dfcc3aa3add7164e3ebd463ea2104b
+  Realm: 1ef421d4581513400ad4f8bd39c8157f3266c62e
+  RealmSwift: f80216fb8334b01ccf526e4f2dd5ff0da61863a2
 
-PODFILE CHECKSUM: c69e8333bcb54057cd9b94f85f9797bc39fd1386
+PODFILE CHECKSUM: b506907f78e423175e59d0305a15471721339ebf
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

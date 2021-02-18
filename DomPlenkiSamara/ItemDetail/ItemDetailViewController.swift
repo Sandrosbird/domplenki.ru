@@ -7,19 +7,17 @@
 
 import UIKit
 
-class ItemDetailViewController: UIViewController {
+class ItemDetailViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     //MARK: - Outlets
+    @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var itemNameLabel: UILabel!
     @IBOutlet weak var itemImage: UIImageView!
     @IBOutlet weak var itemPriceLabel: UILabel!
-    @IBOutlet weak var itemDescriptionLabel: UILabel!
     @IBOutlet weak var addToCartButton: UIButton!
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var itemQuantityTextField: UITextField!
     @IBOutlet weak var quantityStepper: UIStepper!
-    @IBOutlet weak var segmentedControl: UISegmentedControl!
-    
     
     //MARK: - Properties
     var item: ShopItem = ShopItem()
@@ -33,12 +31,40 @@ class ItemDetailViewController: UIViewController {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
+    //MARK: - TableView
+    func numberOfSections(in tableView: UITableView) -> Int {
+        2
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == 0 {
+            return "Описание"
+        } else {
+            return "Характеристики"
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        1
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "itemDetailCell") as? ProfileTableViewCell else { return UITableViewCell() }
+        
+        if indexPath.section == 0 {
+            cell.cellLabel.text = item.description
+        } else if indexPath.section == 1 {
+            cell.cellLabel.text = item.properties
+        }
+        return cell
+    }
+    
     //MARK: - Helpers
     func configureItems() {
         itemNameLabel.text = item.name
         itemImage.image = item.image
-        itemPriceLabel.text = "Цена: \(item.price!) ₽/ед."
-        itemDescriptionLabel.text = item.description
+        itemPriceLabel.text = "\(item.price!) ₽/ед."
+        
         item.isRecent = true
         itemQuantityTextField.text = String(item.count) + " ед."
     }
@@ -67,49 +93,33 @@ class ItemDetailViewController: UIViewController {
     //MARK: - Actions
     
     @IBAction func addToCartButtonDidTap(_ sender: Any) {
-        if item.isInCart {
-            item.isInCart = false
-            Singleton.shared.catalogueItems[row].isInCart = false
-            Singleton.shared.removeItem(type: .cart, position: row)
+        let check = Singleton.shared.checkInCart(item: item)
+        let flag = check.0
+        let position = check.1
+        if flag {
+            Singleton.shared.changeItemFlag(type: .cart, for: item)
+            Singleton.shared.removeFromCart(index: position)
             configureButtons()
         } else {
-            item.isInCart = true
-            Singleton.shared.catalogueItems[row].isInCart = true
-            item.count = Int(quantityStepper.value)
-            Singleton.shared.recordItem(type: .cart, item: item)
+            Singleton.shared.changeItemFlag(type: .cart, for: item)
+            Singleton.shared.addToCart(item: item)
             configureButtons()
         }
     }
     
     @IBAction func favoriteButtonDidTap(_ sender: UIButton) {
         let indexPath = IndexPath(item: row, section: 0)
-        let favorites = Singleton.shared.getItems(type: .favorite)
         
-        if !favorites.contains(item) {
-            item.isFavorite = true
-            Singleton.shared.catalogueItems[row].isFavorite = true
-            Singleton.shared.recordItem(type: .favorite, item: item)
-            
+        if item.isFavorite {
+            Singleton.shared.changeItemFlag(type: .favorite, for: item)
         } else {
-            item.isFavorite = false
-            Singleton.shared.catalogueItems[row].isFavorite = false
-            Singleton.shared.removeItem(type: .favorite, position: row)
+            Singleton.shared.changeItemFlag(type: .favorite, for: item)
         }
         configureButtons()
     }
     
     @IBAction func quantityStepperPressed(_ sender: UIStepper) {
         itemQuantityTextField.text = Int(sender.value).description + " ед."
+        item.count = Int(sender.value)
     }
-    
-    @IBAction func segmentedControlDidChangedSegment(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            itemDescriptionLabel.text = item.description!
-        } else if sender.selectedSegmentIndex == 1 {
-            itemDescriptionLabel.text = item.properties!
-        }
-    }
-    
-    
-    
 }

@@ -5,7 +5,8 @@ target 'DomPlenkiSamara' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 	#pod 'SwiftSoup', '~> 2.3.2'
-	pod 'LayoutHelper'
+	pod 'GMStepper'
+	pod 'RealmSwift', '~> 10.6.0'
   # Pods for DomPlenkiSamara
 
 end

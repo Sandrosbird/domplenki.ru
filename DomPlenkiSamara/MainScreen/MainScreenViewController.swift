@@ -7,53 +7,44 @@
 
 import UIKit
 
-class MainScreenViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-
-    //MARK: - Outlets
-    @IBOutlet weak var searchBar: UISearchBar!
-    @IBOutlet weak var catalogueActionsCollectionVIew: UICollectionView!
-    @IBOutlet weak var recentItemsCollectionView: UICollectionView!
-    @IBOutlet weak var customNavigationBar: UINavigationBar!
-    
-    //MARK: - Variables
-    
-    var recents: [ShopItem] {
-        let wholeCatalogue = Singleton.shared.catalogueItems
-        var recents: [ShopItem] = []
-        for item in wholeCatalogue {
-            if item.isRecent {
-                recents.append(item)
-            }
-        }
-        return recents
+class MainScreenViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let text = searchController.searchBar.text else { return }
+        // add search protocol
     }
     
-    var catalogueActions: [String] = ["Каталог","Акции"]
+    //MARK: - Outlets
+    @IBOutlet weak var catalogueActionsCollectionVIew: UICollectionView!
+    @IBOutlet weak var recentItemsCollectionView: UICollectionView!
+    @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var recentsTitleBackgroundView: UIView!
     
+    
+    //MARK: - Variables
+    lazy var recents: [ShopItem] = []
+    
+    lazy var catalogueActions: [String] = ["Каталог","Акции"]
     
     
     //MARK: - View life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        
         catalogueActionsCollectionVIew.dataSource = self
         catalogueActionsCollectionVIew.delegate = self
         recentItemsCollectionView.dataSource = self
         recentItemsCollectionView.delegate = self
-        // Do any additional setup after loading the view.
         
+        if Singleton.shared.checkCatalogueForEmptiness() {
+            Singleton.shared.fillCatalogue()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
-        searchBar.layer.borderWidth = 1
-        searchBar.layer.borderColor = UIColor.blue.cgColor
-        var searchBarTextField = searchBar.value(forKey: "searchField") as? UITextField
+        super.viewWillAppear(animated)
+        setupNavigationBar()
+        configureViewHeight()
         
-        searchBarTextField?.textColor = .black
-        searchBarTextField?.backgroundColor = .white
-        searchBar.tintColor = .blue
+        recents = Singleton.shared.getItems(type: .recent)
         recentItemsCollectionView.reloadData()
     }
 
@@ -91,7 +82,7 @@ class MainScreenViewController: UIViewController, UICollectionViewDataSource, UI
                 let actionPrice = recents[indexPath.row].actionPrice
             else { return UICollectionViewCell() }
             recentItemsCell.cellNameLabel.text = recents[indexPath.row].name
-            recentItemsCell.cellPriceLabel.text = "Цена: \(price) ₽/ед."
+            recentItemsCell.cellPriceLabel.text = "\(price) ₽/ед."
             if recents[indexPath.row].isSale == true {
                 recentItemsCell.cellActionPriceLabel.text = "Акция: \(actionPrice) ₽/ед."
             } else {
@@ -117,16 +108,57 @@ class MainScreenViewController: UIViewController, UICollectionViewDataSource, UI
             }
         } else if collectionView == recentItemsCollectionView {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailViewController") as? ItemDetailViewController else { return true }
+            guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailTableViewController") as? ItemDetailTableViewController else { return true }
             itemDetailViewController.item = recents[indexPath.row]
             itemDetailViewController.row = indexPath.row
-            showDetailViewController(itemDetailViewController, sender: self)
-//            show(itemDetailViewController, sender: self)
+//            showDetailViewController(itemDetailViewController, sender: self)
+            show(itemDetailViewController, sender: self)
         }
         
         return true
     }
     
+    func setupNavigationBar() {
+        
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationItem.largeTitleDisplayMode = .always
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        let searchBar = searchController.searchBar
+        searchBar.isTranslucent = false
+        StyleButtonsFields.styleSearchTextField(searchBar.searchTextField)
+        searchBar.searchTextField.tintColor = .white
+        searchBar.tintColor = .white
+        searchBar.placeholder = "Поиск по каталогу"
+        
+//        searchController.hidesNavigationBarDuringPresentation = true
+//        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchResultsUpdater = self
+//        searchController.definesPresentationContext = true
+        
+        navigationItem.searchController = searchController
+        
+        if let textField = searchBar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .blue
+            textField.backgroundColor = .white
+        }
+        
+        navigationItem.title = "Главная"
+        
+        navigationController?.navigationBar.barStyle = .default
+        
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.white]
+        navigationController?.navigationBar.barTintColor = .blue
+    }
+    
+    func configureViewHeight() {
+        guard let navigationBarHeight = self.navigationController?.navigationBar.frame.height else { return }
+        let estimateHeight = recentItemsCollectionView.frame.height + catalogueActionsCollectionVIew.frame.height + recentsTitleBackgroundView.frame.height + navigationBarHeight
+        scrollView.contentSize = CGSize(width: self.view.frame.width, height: estimateHeight)
+    }
     
     //MARK: - Actions
     

@@ -11,34 +11,34 @@ class RecentItemsCollectionViewLayout: UICollectionViewFlowLayout {
     //MARK: - Properties
     var cacheAttributes = [IndexPath: UICollectionViewLayoutAttributes]()
     var columnsCount = 2
-    var cellHeight: CGFloat = 200
+    var cellHeight: CGFloat = 150
     private var totalCellsHeight: CGFloat = 0
     
     override func prepare() {
         super.prepare()
-        self.scrollDirection = .horizontal
+        self.scrollDirection = .vertical
         self.cacheAttributes = [:]
         guard let collectionView = self.collectionView else { return }
         let itemsCount = collectionView.numberOfItems(inSection: 0)
         guard itemsCount > 0 else { return }
         
-        let smallCellWidth = collectionView.frame.width / CGFloat(self.columnsCount) - 45
+        let width = collectionView.frame.width / 2.5
         
-        var lastX: CGFloat = 30
+        var lastX: CGFloat = 20
         var lastY: CGFloat = 10
         
         for index in 0 ..< itemsCount {
             let indexPath = IndexPath(item: index, section: 0)
             let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
             
-            attributes.frame = CGRect(x: lastX, y: lastY, width: smallCellWidth, height: self.cellHeight)
+            attributes.frame = CGRect(x: lastX, y: lastY, width: width, height: self.cellHeight)
             let isLastColumn = (index + 1) % (self.columnsCount) == 0 || index == itemsCount - 1
             
             if isLastColumn {
-                lastX = 30
-                lastY += self.cellHeight
+                lastX = 20
+                lastY += self.cellHeight + 10
             } else {
-                lastX += smallCellWidth + 30
+                lastX += width + 30
             }
             
             cacheAttributes[indexPath] = attributes

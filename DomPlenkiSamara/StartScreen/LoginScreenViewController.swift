@@ -7,31 +7,37 @@
 
 import UIKit
 
-class StartScreenViewController: UIViewController {
+class LoginScreenViewController: UIViewController {
 
     //MARK: - Outlets
     
     @IBOutlet weak var signInButton: UIButton!
     @IBOutlet weak var phoneTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var scrollBottomConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButtons()
-        configureScrollView()
+        configureScrollViewNotification()
+        navigationController?.setNavigationBarHidden(false, animated: true)
         // Do any additional setup after loading the view.
     }
     
     //MARK: - Actions
     @IBAction func signInButtonDidTap(_ sender: Any) {
-        guard let phone = phoneTextField.text else { return }
-        if phone == "" {
+        guard
+            let phone = phoneTextField.text,
+            let password = passwordTextField.text
+        else { return }
+        if phone == "" && password == "" {
             let alert = UIAlertController(title: "Ошибка!", message: "Введите данные", preferredStyle: .alert)
             let cancelAction = UIAlertAction(title: "ОК", style: .cancel, handler: nil)
             alert.addAction(cancelAction)
             self.present(alert, animated: true, completion: nil)
         } else {
-            Singleton.shared.user = User(fullName: "", phone: phoneTextField.text!, email: "", city: nil, street: nil, house: nil, apartment: nil)
+            
+            
             performSegue(withIdentifier: "loginSegue", sender: nil)
         }
     }
@@ -41,9 +47,10 @@ class StartScreenViewController: UIViewController {
         StyleButtonsFields.styleFilledButton(signInButton)
         
         StyleButtonsFields.styleTextField(phoneTextField)
+        StyleButtonsFields.styleTextField(passwordTextField)
     }
 
-    func configureScrollView() {
+    func configureScrollViewNotification() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWasShown(notification:)),

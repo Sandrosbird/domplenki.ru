@@ -14,19 +14,18 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Variables
     let singleton = Singleton.shared
-    var favorites: [ShopItem] = Singleton.shared.getItems(type: .favorite)
+    var favorites: [ShopItem] = []
     let myRefreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        favorites = singleton.getItems(type: .favorite)
         configureTableView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        self.navigationController?.navigationBar.prefersLargeTitles = true
-        self.navigationController?.setNavigationBarHidden(true, animated: true)
+        setupNavigationBar()
         refreshTable(nil)
     }
     
@@ -42,7 +41,7 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
             else { return UITableViewCell() }
         cell.cellImage.image = favorites[indexPath.row].image
         cell.cellName.text = favorites[indexPath.row].name
-        cell.cellPrice.text = "Цена: \(price) ₽/ед."
+        cell.cellPrice.text = "\(price) ₽/ед."
         if favorites[indexPath.row].isSale == true {
             cell.cellActionPrice.text = "Акция: \(actionPrice) ₽/ед."
         } else {
@@ -63,19 +62,19 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            favorites[indexPath.row].isFavorite = false
-            Singleton.shared.removeItem(type: .favorite, position: indexPath.row)
+            singleton.changeItemFlag(type: .favorite, for: favorites[indexPath.row])
+            favorites = singleton.getItems(type: .favorite)
             tableView.reloadRows(at: [indexPath], with: .automatic)
         }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailViewController") as? ItemDetailViewController else { return }
+        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailTableViewController") as? ItemDetailTableViewController else { return }
         itemDetailViewController.item = favorites[indexPath.row]
         itemDetailViewController.row = indexPath.row
-        showDetailViewController(itemDetailViewController, sender: self)
-//        show(itemDetailViewController, sender: self)
+//        showDetailViewController(itemDetailViewController, sender: self)
+        show(itemDetailViewController, sender: self)
     }
     
     
@@ -100,6 +99,18 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         myRefreshControl.endRefreshing()
     }
     
+    func setupNavigationBar() {
+        navigationItem.title = "Избранное"
+        navigationController?.navigationItem.largeTitleDisplayMode = .never
+        navigationItem.hidesSearchBarWhenScrolling = false
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.isTranslucent = false
+        
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.barTintColor = .white
+    }
+    
     //MARK: - Actions
     @IBAction func favoriteButtonDidTap(_ sender: UIButton) {
         let row = sender.tag
@@ -107,20 +118,14 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         let indexPath = IndexPath(item: row, section: 0)
         let favorites = singleton.getItems(type: .favorite)
         
-        if !favorites.contains(favorite) {
-            favorite.isFavorite = true
-            singleton.catalogueItems[row].isFavorite = true
-            
-            singleton.recordItem(type: .favorite, item: favorite)
-            
-            tableView.reloadRows(at: [indexPath], with: .left)
-            
+        if favorite.isFavorite {
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+//            catalogueItems.remove(at: row)
+//            catalogueItems.insert(favorite, at: row)
+            tableView.reloadRows(at: [indexPath], with: .none)
         } else {
-            favorite.isFavorite = false
-            singleton.catalogueItems[row].isFavorite = false
-            singleton.removeItem(type: .favorite, position: row)
-            tableView.reloadRows(at: [indexPath], with: .left)
-            
+            singleton.changeItemFlag(type: .favorite, for: favorite)
+            tableView.reloadRows(at: [indexPath], with: .none)
         }
     }
     
