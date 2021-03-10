@@ -15,6 +15,11 @@ class OrderTableViewCell: UITableViewCell {
 
     override func awakeFromNib() {
         super.awakeFromNib()
+        configureFields()
         // Initialization code
+    }
+    
+    private func configureFields() {
+        StyleButtonsFields.styleTextField(cellTextField)
     }
 }

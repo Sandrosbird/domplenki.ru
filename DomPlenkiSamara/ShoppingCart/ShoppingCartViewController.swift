@@ -38,34 +38,56 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
     //MARK: - TableView Delegate&DataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if shoppingCart.isEmpty {
+            self.tableView.setEmptyMessage("Нет товаров в корзине")
+        } else {
+            self.tableView.restore()
+        }
+        
         return shoppingCart.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = shoppingCart[indexPath.row]
+        let flag = item.priceTypeFlag
         
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: "shopCartCell") as? CatalogueTableViewCell,
-            let price = shoppingCart[indexPath.row].price,
-            let actionPrice = shoppingCart[indexPath.row].actionPrice
-            else { return UITableViewCell() }
+            let price = item.price1,
+            let secondPrice = item.price2,
+            let thirdPrice = item.price3,
+            let fourthPrice = item.price4
+        else { return UITableViewCell() }
         
-        cell.cellImage.image = shoppingCart[indexPath.row].image
-        cell.cellName.text = shoppingCart[indexPath.row].name
-        cell.cellPrice.text = "\(price) ₽/ед."
-        cell.countLabel.text = "x \(shoppingCart[indexPath.row].count)"
-        if shoppingCart[indexPath.row].isSale == true {
-            cell.cellActionPrice.text = "Акция: \(actionPrice) ₽/ед."
+        
+        cell.cellImage.image = item.image
+        cell.cellName.text = item.name
+        cell.countLabel.text = "x \(item.count)"
+        
+        cell.priceTypeButton.tag = indexPath.row
+        
+        if flag {
+            StyleButtonsFields.styleHollowButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(price)"
+            cell.cellActionPrice.text = "Опт.: \(secondPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/п.м", for: .normal)
         } else {
-            cell.cellPrice.textColor = .black
-            cell.cellActionPrice.text = nil
+            StyleButtonsFields.styleFilledButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(thirdPrice)"
+            cell.cellActionPrice.text = "Опт.: \(fourthPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/кв.м", for: .normal)
         }
         
-        if shoppingCart[indexPath.row].isFavorite {
+        if item.isFavorite {
             cell.favoriteButton.setImage(UIImage(named: "star.fill")!, for: .normal)
         } else {
             cell.favoriteButton.setImage(UIImage(named: "star")!, for: .normal)
         }
+            
         return cell
+        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -89,7 +111,7 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
         
         let headerView = UIView()
 
-        headerView.backgroundColor = .systemGray5
+        headerView.backgroundColor = .systemGray6
        
         headerView.addSubview(label)
         
@@ -124,10 +146,9 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
     func updateAveragePrice() {
         averagePrice = 0
         for item in shoppingCart {
-            let actionPrice = Int(item.actionPrice!)
-            let price = Int(item.price!)
+            let price = Int(item.price1!)
             if item.isSale {
-                averagePrice! = averagePrice! + (actionPrice! * item.count)
+                averagePrice! = averagePrice! + (price! * item.count)
             } else {
                 averagePrice! = averagePrice! + (price! * item.count)
             }
@@ -177,17 +198,29 @@ class ShoppingCartViewController: UIViewController, UITableViewDelegate, UITable
             guard let strongSelf = self else { return }
             for item in strongSelf.shoppingCart {
                 strongSelf.singleton.changeItemFlag(type: .cart, for: item)
+                item.count = 0
             }
             strongSelf.shoppingCart.removeAll()
             strongSelf.singleton.removeAllFromCart()
             strongSelf.averagePrice = 0
             strongSelf.updateAveragePrice()
+            strongSelf.priceLabel.text = "0 ₽"
             strongSelf.tableView.reloadData()
         }
         alert.addAction(cancelAction)
         alert.addAction(acceptAction)
         
         self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func priceTypeButtonDidTap(_ sender: UIButton) {
+        let row = sender.tag
+        let indexPath = IndexPath(item: row, section: 0)
+        let item = shoppingCart[row]
+        
+        singleton.changeItemFlag(type: .priceType, for: item)
+
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
     
     // MARK: - Navigation

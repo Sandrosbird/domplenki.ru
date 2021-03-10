@@ -36,64 +36,6 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
         setupNavigationBar()
     }
     
-    //MARK: - Delegate&DataSource
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        catalogueItems.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard
-            let cell = tableView.dequeueReusableCell(withIdentifier: "catalogueCell") as? CatalogueTableViewCell,
-            let price = catalogueItems[indexPath.row].price,
-            let actionPrice = catalogueItems[indexPath.row].actionPrice
-        else { return UITableViewCell() }
-        cell.cellName.text = catalogueItems[indexPath.row].name
-        cell.cellPrice.text = "\(price) ₽/ед."
-        cell.cellImage.image = catalogueItems[indexPath.row].image
-
-        cell.favoriteButton.tag = indexPath.row
-        
-        if catalogueItems[indexPath.row].isFavorite {
-            cell.favoriteButton.setImage(UIImage(named: "star.fill")!, for: .normal)
-        } else {
-            cell.favoriteButton.setImage(UIImage(named: "star")!, for: .normal)
-        }
-        
-        return cell
-    }
-    
-    //MARK: - Helpers
-    func configureRefreshControl() {
-        
-        myRefreshControl.attributedTitle = NSAttributedString(string: "Обновление данных...")
-        myRefreshControl.addTarget(self, action: #selector(self.refreshTable(_:)), for: .valueChanged)
-        tableView.refreshControl = myRefreshControl
-    }
-    
-    @objc func refreshTable(_ sender: Any?) {
-        // TODO: add some mothod to upload fresh data
-        tableView.reloadData()
-        myRefreshControl.endRefreshing()
-    }
-    
-    func setupNavigationBar() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
-        navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = false
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
-        navigationItem.largeTitleDisplayMode = .automatic   
-    }
-    
-    // MARK: - Navigation
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        guard let itemDetailViewController = storyboard.instantiateViewController(identifier: "ItemDetailTableViewController") as? ItemDetailTableViewController else { return }
-        itemDetailViewController.item = catalogueItems[indexPath.row]
-        itemDetailViewController.row = indexPath.row
-//        showDetailViewController(itemDetailViewController, sender: self)
-        show(itemDetailViewController, sender: self)
-    }
-    
     //MARK: - Actions
     @IBAction func favoriteButtonDidTap(_ sender: UIButton) {
         let row = sender.tag
@@ -110,5 +52,15 @@ class CatalogueViewController: UIViewController, UITableViewDelegate, UITableVie
             singleton.changeItemFlag(type: .favorite, for: favorite)
             tableView.reloadRows(at: [indexPath], with: .none)
         }
+    }
+    
+    @IBAction func priceTypeButtonDidTap(_ sender: UIButton) {
+        let row = sender.tag
+        let indexPath = IndexPath(item: row, section: 0)
+        let item = catalogueItems[row]
+        
+        singleton.changeItemFlag(type: .priceType, for: item)
+
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
 }

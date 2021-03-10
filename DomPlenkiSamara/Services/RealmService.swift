@@ -6,14 +6,14 @@
 //
 
 import UIKit
-import RealmSwift
-
-final class RealmService {
-    
-    func saveDataToRealm(_ objects: [ShopItem]) {
-        
-    }
-    
-    
-}
+//import RealmSwift
+//
+//final class RealmService {
+//
+//    func saveDataToRealm(_ objects: [ShopItem]) {
+//
+//    }
+//
+//
+//}
 

@@ -30,23 +30,42 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if favorites.isEmpty {
+            self.tableView.setEmptyMessage("Вы пока не добавили товары в избранное")
+        } else {
+            self.tableView.restore()
+        }
+        
         return favorites.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = favorites[indexPath.row]
+        let flag = item.priceTypeFlag
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell") as? CatalogueTableViewCell,
-            let price = favorites[indexPath.row].price,
-            let actionPrice = favorites[indexPath.row].actionPrice
+            let price = item.price1,
+            let secondPrice = item.price2,
+            let thirdPrice = item.price3,
+            let fourthPrice = item.price4
             else { return UITableViewCell() }
         cell.cellImage.image = favorites[indexPath.row].image
         cell.cellName.text = favorites[indexPath.row].name
-        cell.cellPrice.text = "\(price) ₽/ед."
-        if favorites[indexPath.row].isSale == true {
-            cell.cellActionPrice.text = "Акция: \(actionPrice) ₽/ед."
+        
+        cell.priceTypeButton.tag = indexPath.row
+        
+        if flag {
+            StyleButtonsFields.styleHollowButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(price)"
+            cell.cellActionPrice.text = "Опт.: \(secondPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/п.м", for: .normal)
         } else {
-            cell.cellPrice.textColor = .black
-            cell.cellActionPrice.text = nil
+            StyleButtonsFields.styleFilledButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(thirdPrice)"
+            cell.cellActionPrice.text = "Опт.: \(fourthPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/кв.м", for: .normal)
         }
         
         if favorites[indexPath.row].isFavorite {
@@ -87,7 +106,6 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func configureRefreshControl() {
-        
         myRefreshControl.attributedTitle = NSAttributedString(string: "Обновление данных...")
         myRefreshControl.addTarget(self, action: #selector(self.refreshTable(_:)), for: .valueChanged)
         tableView.refreshControl = myRefreshControl
@@ -127,6 +145,16 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
             singleton.changeItemFlag(type: .favorite, for: favorite)
             tableView.reloadRows(at: [indexPath], with: .none)
         }
+    }
+    
+    @IBAction func priceTypeButtonDidTap(_ sender: UIButton) {
+        let row = sender.tag
+        let indexPath = IndexPath(item: row, section: 0)
+        let item = favorites[row]
+        
+        singleton.changeItemFlag(type: .priceType, for: item)
+
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
     
 }

@@ -10,12 +10,13 @@ import UIKit
 class StartScreenViewController: UIViewController {
 
     //MARK: - Outlets
-    @IBOutlet weak var authorizeButton: UIButton!
+    @IBOutlet weak var authoriseButton: UIButton!
     @IBOutlet weak var registerButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButtons()
+        FirebaseService.shared.addUserListener(controller: self)
         // Do any additional setup after loading the view.
     }
     
@@ -23,20 +24,8 @@ class StartScreenViewController: UIViewController {
         return .lightContent
     }
     
-    
     private func configureButtons() {
-        StyleButtonsFields.styleFilledButton(authorizeButton)
+        StyleButtonsFields.styleFilledButton(authoriseButton)
         StyleButtonsFields.styleHollowButton(registerButton)
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

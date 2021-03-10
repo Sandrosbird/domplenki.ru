@@ -49,6 +49,8 @@ class Singleton {
             return items
         case .catalogue:
             return catalogueItems
+        case .priceType:
+            return catalogueItems
         }
     }
     
@@ -80,6 +82,8 @@ class Singleton {
             } else {
                 item.isRecent = true
             }
+        case .priceType:
+            item.priceTypeFlag.toggle()
         }
     }
     
@@ -115,7 +119,7 @@ class Singleton {
     }
     
     enum ItemType {
-        case recent, favorite, cart, action, catalogue
+        case recent, favorite, cart, action, catalogue, priceType
     }
 }
 

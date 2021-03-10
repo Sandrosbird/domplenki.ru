@@ -11,5 +11,5 @@ class RecentItemsCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var cellImage: UIImageView!
     @IBOutlet weak var cellNameLabel: UILabel!
     @IBOutlet weak var cellPriceLabel: UILabel!
-    @IBOutlet weak var cellActionPriceLabel: UILabel!
+    @IBOutlet weak var cellWholesalePriceLabel: UILabel!
 }

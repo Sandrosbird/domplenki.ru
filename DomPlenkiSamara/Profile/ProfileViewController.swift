@@ -82,7 +82,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let headerView = UIView()
 
-        headerView.backgroundColor = .systemGray5
+        headerView.backgroundColor = .systemGray6
        
         headerView.addSubview(label)
         

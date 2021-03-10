@@ -63,7 +63,7 @@ class ItemDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     func configureItems() {
         itemNameLabel.text = item.name
         itemImage.image = item.image
-        itemPriceLabel.text = "\(item.price!) ₽/ед."
+        itemPriceLabel.text = "\(item.price1!)"
         
         item.isRecent = true
         itemQuantityTextField.text = String(item.count) + " ед."
@@ -72,12 +72,14 @@ class ItemDetailViewController: UIViewController, UITableViewDelegate, UITableVi
     func configureButtons() {
         if item.isInCart {
             StyleButtonsFields.styleHollowButton(addToCartButton)
-            addToCartButton.setTitle("В корзине", for: .normal)
+            addToCartButton.setImage(UIImage(named: "cart.fill"), for: .normal)
+            addToCartButton.setTitle("", for: .normal)
             addToCartButton.backgroundColor = .clear
-            addToCartButton.setTitleColor(.blue, for: .normal)
+            addToCartButton.setTitleColor(.dpBlue, for: .normal)
         } else {
             StyleButtonsFields.styleFilledButton(addToCartButton)
-            addToCartButton.setTitle("Добавить в корзину", for: .normal)
+            addToCartButton.setImage(UIImage(named: "cart.fill"), for: .normal)
+            addToCartButton.setTitle("", for: .normal)
             addToCartButton.setTitleColor(.white, for: .normal)
         }
         

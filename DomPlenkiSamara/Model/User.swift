@@ -25,6 +25,4 @@ final class User {
         self.house = house
         self.apartment = apartment
     }
-    
-     
 }

@@ -19,7 +19,6 @@ class ActionsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.setNavigationBarHidden(false, animated: false)
         saleItems = singleton.getItems(type: .action)
         configureTableView()
     }
@@ -35,18 +34,36 @@ class ActionsViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let flag = saleItems[indexPath.row].priceTypeFlag
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: "actionsCell") as? CatalogueTableViewCell,
-            let price = saleItems[indexPath.row].price,
-            let actionPrice = saleItems[indexPath.row].actionPrice
-            else { return UITableViewCell() }
+            let price = saleItems[indexPath.row].price1,
+            let secondPrice = saleItems[indexPath.row].price2,
+            let thirdPrice = saleItems[indexPath.row].price3,
+            let fourthPrice = saleItems[indexPath.row].price4
+        else { return UITableViewCell() }
         
         cell.cellImage.image = saleItems[indexPath.row].image
         cell.cellName.text = saleItems[indexPath.row].name
-        cell.cellPrice.text = "\(price) ₽/ед."
-        cell.cellActionPrice.text = "Акция: \(actionPrice) ₽/ед."
         cell.favoriteButton.tag = indexPath.row
+        cell.priceTypeButton.tag = indexPath.row
         
+        if flag {
+            StyleButtonsFields.styleHollowButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(price)"
+            cell.cellActionPrice.text = "Опт.: \(secondPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/п.м", for: .normal)
+        } else {
+            StyleButtonsFields.styleFilledButton(cell.priceTypeButton)
+            cell.cellPrice.text = "Розн.: \(thirdPrice)"
+            cell.cellActionPrice.text = "Опт.: \(fourthPrice)"
+            
+            cell.priceTypeButton.setTitle("₽/кв.м", for: .normal)
+        }
+        
+                
         if saleItems[indexPath.row].isFavorite {
             cell.favoriteButton.setImage(UIImage(named: "star.fill")!, for: .normal)
         } else {
@@ -76,14 +93,11 @@ class ActionsViewController: UIViewController, UITableViewDataSource, UITableVie
     }
     
     func setupNavigationBar() {
-        navigationController?.setNavigationBarHidden(false, animated: true)
         navigationController?.navigationBar.barTintColor = .white
-        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
-        navigationItem.largeTitleDisplayMode = .automatic
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
     }
-    
-
     
     // MARK: - Navigation
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -99,7 +113,6 @@ class ActionsViewController: UIViewController, UITableViewDataSource, UITableVie
         let row = sender.tag
         let favorite = saleItems[row]
         let indexPath = IndexPath(item: row, section: 0)
-        let favorites = singleton.getItems(type: .favorite)
         
         if favorite.isFavorite {
             singleton.changeItemFlag(type: .favorite, for: favorite)
@@ -110,5 +123,14 @@ class ActionsViewController: UIViewController, UITableViewDataSource, UITableVie
             singleton.changeItemFlag(type: .favorite, for: favorite)
             tableView.reloadRows(at: [indexPath], with: .none)
         }
+    }
+    @IBAction func priceTypeButtonDidTap(_ sender: UIButton) {
+        let row = sender.tag
+        let indexPath = IndexPath(item: row, section: 0)
+        let item = saleItems[row]
+        
+        singleton.changeItemFlag(type: .priceType, for: item)
+
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
 }

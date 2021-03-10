@@ -14,6 +14,7 @@ class OrderViewController: UIViewController, UITableViewDelegate, UITableViewDat
     //MARK: - Outlets
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var totalPriceLabel: UILabel!
+    @IBOutlet weak var performOrderButton: UIButton!
     
     
     //MARK: - ViewLifeCycle
@@ -24,6 +25,8 @@ class OrderViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.totalPriceLabel.text = totalPrice
 
         self.navigationController?.setNavigationBarHidden(false, animated: false)
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        configureButtons()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -56,9 +59,11 @@ class OrderViewController: UIViewController, UITableViewDelegate, UITableViewDat
             case 0:
                 cell.cellNameLabel.text = "Электронная почта"
                 cell.cellTextField.text = Singleton.shared.user?.email
+                cell.cellTextField.placeholder = "E-mail"
             case 1:
-                cell.cellNameLabel.text = "Контактные данные"
+                cell.cellNameLabel.text = "Данные для связи"
                 cell.cellTextField.text = Singleton.shared.user?.phone
+                cell.cellTextField.placeholder = "Номер телефона"
             default:
                 cell.cellNameLabel.text = "Комментарии к заказу"
             }
@@ -67,13 +72,33 @@ class OrderViewController: UIViewController, UITableViewDelegate, UITableViewDat
         return UITableViewCell()
     }
     
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let label = UILabel()
+        label.frame = CGRect(x: 15, y: 20, width: view.frame.width, height: 17)
+        label.font = UIFont(name: "Arial", size: 20)
+        label.font = UIFont.boldSystemFont(ofSize: 15)
         switch section {
         case 0:
-            return "Информация о доставке"
+            label.text = "Информация о доставке"
         default:
-            return "Информация о получателе"
+            label.text = "Информация о получателе"
         }
+        
+        let headerView = UIView()
+
+        headerView.backgroundColor = .systemGray6
+       
+        headerView.addSubview(label)
+        
+        return headerView
+    }
+    
+    private func configureButtons() {
+        StyleButtonsFields.styleFilledButton(performOrderButton)
     }
 
 }

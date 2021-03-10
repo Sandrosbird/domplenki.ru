@@ -46,8 +46,6 @@ class CatalogueActionCollectionViewLayout: UICollectionViewFlowLayout {
             cacheAttributes[indexPath] = attributes
             self.totalCellsHeight += lastY
         }
-        
-        
     }
     
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

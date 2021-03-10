@@ -15,7 +15,8 @@ class ItemDetailHeaderTableViewCell: UITableViewCell {
     @IBOutlet weak var itemImage: UIImageView!
     @IBOutlet weak var itemNameLabel: UILabel!
     @IBOutlet weak var itemPriceLabel: UILabel!
-    @IBOutlet weak var itemQuantityLabel: UILabel!
+    @IBOutlet weak var itemSecondPriceLabel: UILabel!
+    @IBOutlet weak var priceTypeButton: UIButton!
     @IBOutlet weak var addToCartButton: UIButton!
     @IBOutlet weak var stepper: GMStepper!
     
@@ -43,7 +44,7 @@ class ItemDetailHeaderTableViewCell: UITableViewCell {
             addToCartButton.isHidden = false
             stepper.isHidden = true
             StyleButtonsFields.styleFilledButton(addToCartButton)
-            addToCartButton.setTitle("Добавить в корзину", for: .normal)
+            addToCartButton.setTitle("", for: .normal)
             addToCartButton.setTitleColor(.white, for: .normal)
         }
         

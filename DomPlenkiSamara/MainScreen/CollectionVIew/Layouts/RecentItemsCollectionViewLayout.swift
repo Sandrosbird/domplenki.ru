@@ -11,38 +11,41 @@ class RecentItemsCollectionViewLayout: UICollectionViewFlowLayout {
     //MARK: - Properties
     var cacheAttributes = [IndexPath: UICollectionViewLayoutAttributes]()
     var columnsCount = 2
-    var cellHeight: CGFloat = 150
-    private var totalCellsHeight: CGFloat = 0
+   
+    var cellWidth: CGFloat = 150
+    private var totalCellsWidth: CGFloat = 0
     
     override func prepare() {
         super.prepare()
-        self.scrollDirection = .vertical
+        self.scrollDirection = .horizontal
         self.cacheAttributes = [:]
         guard let collectionView = self.collectionView else { return }
         let itemsCount = collectionView.numberOfItems(inSection: 0)
         guard itemsCount > 0 else { return }
         
-        let width = collectionView.frame.width / 2.5
+        let height: CGFloat = 200
         
         var lastX: CGFloat = 20
-        var lastY: CGFloat = 10
+        var lastY: CGFloat = 0
         
         for index in 0 ..< itemsCount {
             let indexPath = IndexPath(item: index, section: 0)
             let attributes = UICollectionViewLayoutAttributes(forCellWith: indexPath)
             
-            attributes.frame = CGRect(x: lastX, y: lastY, width: width, height: self.cellHeight)
-            let isLastColumn = (index + 1) % (self.columnsCount) == 0 || index == itemsCount - 1
+            attributes.frame = CGRect(x: lastX, y: lastY, width: self.cellWidth, height: height)
             
-            if isLastColumn {
-                lastX = 20
-                lastY += self.cellHeight + 10
-            } else {
-                lastX += width + 30
-            }
+            lastX += self.cellWidth + 20
+            lastY = 0
+            
+//            if isLastColumn {
+//                lastX = 20
+//                lastY += self.cellHeight + 10
+//            } else {
+//                lastX += width + 30
+//            }
             
             cacheAttributes[indexPath] = attributes
-            self.totalCellsHeight = lastY
+            self.totalCellsWidth = lastX
         }
     }
     
@@ -55,6 +58,14 @@ class RecentItemsCollectionViewLayout: UICollectionViewFlowLayout {
     }
     
     override var collectionViewContentSize: CGSize {
-        return CGSize(width: self.collectionView?.frame.width ?? 0, height: self.totalCellsHeight)
+        var width: CGFloat = 200
+        if self.totalCellsWidth < width {
+           
+        } else {
+            width = totalCellsWidth
+        }
+        return CGSize(width: width, height: 200)
     }
+    
+    
 }

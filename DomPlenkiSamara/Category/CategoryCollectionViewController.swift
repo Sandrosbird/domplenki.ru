@@ -13,11 +13,7 @@ class CategoryCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Do any additional setup after loading the view.
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -25,26 +21,14 @@ class CategoryCollectionViewController: UICollectionViewController {
         setupNavigationBar()
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
-    }
-    */
-
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
         return categories.count
     }
 
@@ -55,7 +39,6 @@ class CategoryCollectionViewController: UICollectionViewController {
         cell.layer.masksToBounds = true
         
         cell.nameLabel.text = categories[indexPath.row]
-        // Configure the cell
     
         return cell
     }
@@ -68,8 +51,8 @@ class CategoryCollectionViewController: UICollectionViewController {
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
         navigationItem.largeTitleDisplayMode = .always
-        
     }
 
 }

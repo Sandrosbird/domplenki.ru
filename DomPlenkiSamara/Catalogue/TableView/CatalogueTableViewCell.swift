@@ -14,6 +14,7 @@ class CatalogueTableViewCell: UITableViewCell {
     @IBOutlet weak var cellActionPrice: UILabel!
     @IBOutlet weak var favoriteButton: UIButton!
     @IBOutlet weak var countLabel: UILabel!
+    @IBOutlet weak var priceTypeButton: UIButton!
     
     override func awakeFromNib() {
         super.awakeFromNib()

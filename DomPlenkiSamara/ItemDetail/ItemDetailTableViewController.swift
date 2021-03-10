@@ -57,7 +57,7 @@ class ItemDetailTableViewController: UITableViewController {
         
         let headerView = UIView()
 
-        headerView.backgroundColor = .systemGray5
+        headerView.backgroundColor = .systemGray6
        
         headerView.addSubview(label)
         
@@ -71,13 +71,35 @@ class ItemDetailTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let emptyCell = UITableViewCell()
+        let flag = item.priceTypeFlag
         if indexPath.section == 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ItemDetailHeaderTableViewCell") as? ItemDetailHeaderTableViewCell else { return emptyCell }
+            guard
+                let cell = tableView.dequeueReusableCell(withIdentifier: "ItemDetailHeaderTableViewCell") as? ItemDetailHeaderTableViewCell,
+                let price = item.price1,
+                let secondPrice = item.price2,
+                let thirdPrice = item.price3,
+                let fourthPrice = item.price4
+            else { return emptyCell }
             cell.item = item
             cell.itemImage.image = item.image
             cell.itemNameLabel.text = item.name
-            cell.itemPriceLabel.text = item.price
-            cell.itemQuantityLabel.text = "₽/ед."
+            cell.itemPriceLabel.text = "Опт.: \(price)"
+            cell.itemSecondPriceLabel.text = "Розн.: \(secondPrice)"
+            
+            if flag {
+                StyleButtonsFields.styleHollowButton(cell.priceTypeButton)
+                cell.itemPriceLabel.text = "Розн.: \(price)"
+                cell.itemSecondPriceLabel.text = "Опт.: \(secondPrice)"
+                
+                cell.priceTypeButton.setTitle("₽/п.м", for: .normal)
+            } else {
+                StyleButtonsFields.styleFilledButton(cell.priceTypeButton)
+                cell.itemPriceLabel.text = "Розн.: \(thirdPrice)"
+                cell.itemSecondPriceLabel.text = "Опт.: \(fourthPrice)"
+                
+                cell.priceTypeButton.setTitle("₽/кв.м", for: .normal)
+            }
+            
             if item.isFavorite {
                 cell.favoriteButton.setImage(UIImage(named: "star.fill"), for: .normal)
             } else {
@@ -105,6 +127,15 @@ class ItemDetailTableViewController: UITableViewController {
         navigationItem.largeTitleDisplayMode = .automatic
     }
     
+    
+    @IBAction func priceTypeButtonDidTap(_ sender: UIButton) {
+        let row = sender.tag
+        let indexPath = IndexPath(item: row, section: 0)
+        
+        Singleton.shared.changeItemFlag(type: .priceType, for: item)
+
+        tableView.reloadRows(at: [indexPath], with: .none)
+    }
     
 
 }
