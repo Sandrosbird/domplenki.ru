@@ -10,6 +10,7 @@ import UIKit
 extension UINavigationController {
     func forceUpdateNavigationBar() {
         DispatchQueue.main.async {
+            self.navigationBar.prefersLargeTitles = true
             self.navigationBar.sizeToFit()
         }
     }

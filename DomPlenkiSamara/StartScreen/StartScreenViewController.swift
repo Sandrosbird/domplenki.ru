@@ -16,7 +16,9 @@ class StartScreenViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureButtons()
-        FirebaseService.shared.addUserListener(controller: self)
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1500)) {
+            FirebaseService.shared.addUserListener(controller: self)
+        }
         // Do any additional setup after loading the view.
     }
     

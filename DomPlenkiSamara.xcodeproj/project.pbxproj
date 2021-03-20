@@ -30,6 +30,7 @@
 		760AFFE125BF1BB2008BD8C2 /* ActionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760AFFE025BF1BB1008BD8C2 /* ActionsViewController.swift */; };
 		760AFFE925C01722008BD8C2 /* ItemDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 760AFFE825C01721008BD8C2 /* ItemDetailViewController.swift */; };
 		7626A87325DE6EA700272ACF /* RealmService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7626A87225DE6EA700272ACF /* RealmService.swift */; };
+		764D4EE925FB5C7E00C7C1FC /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 764D4EE825FB5C7E00C7C1FC /* LaunchScreenViewController.swift */; };
 		7658511F25E251C000AFDD9C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7658511E25E251C000AFDD9C /* GoogleService-Info.plist */; };
 		7664408C25EE686100ABDCA1 /* UIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7664408B25EE686100ABDCA1 /* UIColorExtensions.swift */; };
 		76679F3A25E258770093DFF5 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76679F3925E258770093DFF5 /* FirebaseService.swift */; };
@@ -85,6 +86,7 @@
 		760AFFE025BF1BB1008BD8C2 /* ActionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsViewController.swift; sourceTree = "<group>"; };
 		760AFFE825C01721008BD8C2 /* ItemDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemDetailViewController.swift; sourceTree = "<group>"; };
 		7626A87225DE6EA700272ACF /* RealmService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmService.swift; sourceTree = "<group>"; };
+		764D4EE825FB5C7E00C7C1FC /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
 		7658511E25E251C000AFDD9C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7664408B25EE686100ABDCA1 /* UIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtensions.swift; sourceTree = "<group>"; };
 		76679F3925E258770093DFF5 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			children = (
 				7606784125B8AD66007DC6AD /* Assets.xcassets */,
 				7606784325B8AD66007DC6AD /* LaunchScreen.storyboard */,
+				764D4EE825FB5C7E00C7C1FC /* LaunchScreenViewController.swift */,
 				7606783E25B8AD63007DC6AD /* Main.storyboard */,
 				7606783825B8AD63007DC6AD /* AppDelegate.swift */,
 				7606783A25B8AD63007DC6AD /* SceneDelegate.swift */,
@@ -497,6 +500,7 @@
 				760AFFC525BB046A008BD8C2 /* CatalogueViewController.swift in Sources */,
 				768F79E125DFCDFB00398EF4 /* MainScreen+Helpers.swift in Sources */,
 				7606783925B8AD63007DC6AD /* AppDelegate.swift in Sources */,
+				764D4EE925FB5C7E00C7C1FC /* LaunchScreenViewController.swift in Sources */,
 				76F3944E25DA774600B7A343 /* CategoryCollectionViewController.swift in Sources */,
 				760AFFE125BF1BB2008BD8C2 /* ActionsViewController.swift in Sources */,
 				767F742025D517D60098160B /* StartScreenViewController.swift in Sources */,

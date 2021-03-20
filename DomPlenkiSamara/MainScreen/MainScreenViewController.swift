@@ -34,21 +34,21 @@ class MainScreenViewController: UIViewController, UICollectionViewDataSource, UI
         catalogueActionsCollectionView.delegate = self
         recentItemsCollectionView.dataSource = self
         recentItemsCollectionView.delegate = self
+        setupNavigationBar()
+        preventLargeTitleCollapsing()
        
-        
         if Singleton.shared.checkCatalogueForEmptiness() {
             Singleton.shared.fillCatalogue()
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        
         super.viewWillAppear(animated)
         setupNavigationBar()
         reloadRecents()
         recents = Singleton.shared.getItems(type: .recent)
-        navigationController?.forceUpdateNavigationBar()
-        
+//        navigationController?.navigationBar.sizeToFit()
+//        navigationController?.forceUpdateNavigationBar()
     }
 }
 

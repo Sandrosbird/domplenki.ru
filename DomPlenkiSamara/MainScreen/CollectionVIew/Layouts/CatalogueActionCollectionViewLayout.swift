@@ -22,11 +22,11 @@ class CatalogueActionCollectionViewLayout: UICollectionViewFlowLayout {
         let itemsCount = collectionView.numberOfItems(inSection: 0)
         guard itemsCount > 0 else { return }
         
-        let cellWidth = collectionView.frame.width / 3
+        let cellWidth = collectionView.frame.width / 2.9
         
-        var lastX: CGFloat = 20
+        var lastX: CGFloat = (collectionView.frame.width - cellWidth * 2) / 3
 //            collectionView.frame.width / 15
-        var lastY: CGFloat = 30
+        var lastY: CGFloat = 10
         
         for index in 0 ..< itemsCount {
             let indexPath = IndexPath(item: index, section: 0)
@@ -40,7 +40,7 @@ class CatalogueActionCollectionViewLayout: UICollectionViewFlowLayout {
                 lastX = 0
                 lastY += self.cellHeight
             } else {
-                lastX += cellWidth + 30
+                lastX += cellWidth + ((collectionView.frame.width - cellWidth * 2) / 3)
             }
             
             cacheAttributes[indexPath] = attributes

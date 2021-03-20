@@ -43,12 +43,10 @@ class CategoryCollectionViewController: UICollectionViewController {
         return cell
     }
 
-    
     //MARK: - Helpers
     func setupNavigationBar() {
         navigationItem.hidesSearchBarWhenScrolling = false
         navigationController?.setNavigationBarHidden(false, animated: true)
-        navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor : UIColor.black]
